@@ -1,0 +1,431 @@
+/* Global Styling */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0 20px;
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+header {
+  text-align: center;
+  padding: 20px 0;
+  background-color: #1e1e1e;
+  margin-bottom: 10px;
+}
+
+h1 {
+  margin: 0;
+  color: #f0f0f0;
+}
+
+/* Main Layout */
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Simulation Section Styling */
+#simulationSection {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+#simulationContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #1e1e1e;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+#buttonPanel {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+}
+
+#buttonPanel button {
+  margin-bottom: 10px;
+  background-color: #333;
+  border: 1px solid #555;
+  color: #e0e0e0;
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  border-radius: 4px;
+}
+
+#buttonPanel button:hover {
+  background-color: #444;
+  transform: scale(1.05);
+}
+
+canvas {
+  display: block;
+  border: 1px solid #444;
+  background-color: #1e1e1e;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Center and space out radio buttons in the mode and boundary sections */
+#controlModeGroup .radio-group,
+#boundaryControlGroup .radio-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Adjust spacing as needed */
+  margin-top: 10px;
+}
+
+/* Optional: center the entire section label and group */
+#modeBoundaryGroup label {
+  display: block;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+/* Controls Section */
+.wrapper{
+  display: flex;
+  flex-direction: column;
+}
+
+.controlsSection {
+  flex-grow: 1; /* Both will stretch to the same width */
+  max-width: 900px;
+  background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  margin-bottom: 20px;
+}
+
+#controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: space-between;
+}
+
+.control-group {
+  flex: 1 1 300px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.control-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.control-group input[type="text"],
+.control-group input[type="number"] {
+  padding: 5px;
+  background-color: #333;
+  color: #e0e0e0;
+  border: 1px solid #555;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+.control-group input[type="range"] {
+  width: 100%;
+  background: transparent;
+  margin: 10px 0;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.radio-group input[type="radio"] {
+  margin: 0;
+}
+
+/* Custom Slider Styling */
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    #555 0%,
+    #555 calc(var(--default, 50%) - 1px),
+    #f00 calc(var(--default, 50%) - 1px),
+    #f00 calc(var(--default, 50%) + 1px),
+    #555 calc(var(--default, 50%) + 1px),
+    #555 100%
+  );
+  border-radius: 3px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #bbb;
+  margin-top: -5px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+  background: #e0e0e0;
+  transform: scale(1.2);
+}
+
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    #555 0%,
+    #555 calc(var(--default, 50%) - 1px),
+    #f00 calc(var(--default, 50%) - 1px),
+    #f00 calc(var(--default, 50%) + 1px),
+    #555 calc(var(--default, 50%) + 1px),
+    #555 100%
+  );
+  border-radius: 3px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #bbb;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+  background: #e0e0e0;
+  transform: scale(1.2);
+}
+
+/* Highlight invalid input with red border */
+.input-error {
+  border: 2px solid red !important;
+}
+
+/* Media Queries for Smaller Devices */
+@media (max-width: 768px) {
+  #controls {
+    flex-direction: column;
+  }
+  
+  .control-group {
+    flex: 1 1 100%;
+  }
+  
+  #simulationContainer {
+    flex-direction: column;
+  }
+  
+  #buttonPanel {
+    flex-direction: row;
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+  
+  #buttonPanel button {
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
+}
+
+/* --- Tab Container Styles for Control Mode --- */
+.control-tab-container {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.control-tab-container h3 {
+  margin: 0 0 0.5rem 0;
+  text-align: center;
+  color: #f0f0f0;
+}
+
+.tab-header {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #555;
+  padding-bottom: 0.5rem;
+}
+
+.tab-button {
+  background-color: #333;
+  border: none;
+  color: #e0e0e0;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px 4px 0 0;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.tab-button.active {
+  background-color: #555;
+}
+
+.tab-button:not(.active):hover {
+  background-color: #444;
+}
+
+.tab-content {
+  padding: 1rem;
+  background-color: #333;
+  border-radius: 0 4px 4px 4px;
+  color: #e0e0e0;
+}
+
+/* Optionally, style the input inside the tab content */
+.tab-content input[type="text"] {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  background-color: #222;
+  border: 1px solid #555;
+  color: #e0e0e0;
+  border-radius: 4px;
+}
+
+/* --- Existing Radio Button Centering for Right End Condition --- */
+#controlsSection .radio-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.mathquill-field {
+  display: inline-block;
+  min-width: 150px;
+  min-height: 1.5em;
+  border: 1px solid #555;
+  padding: 0.2em;
+  background-color: #222;
+  color: #e0e0e0;
+  border-radius: 4px;
+}
+
+/* Style for the time display inside the function tab */
+.tab-content .time-display {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #e0e0e0;
+}
+
+/* Styles for the function table */
+#functionTableContainer {
+  margin-top: 2rem;
+}
+#functionTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0.5rem;
+}
+#functionTable th, #functionTable td {
+  border: 1px solid #555;
+  padding: 0.5rem;
+  text-align: left;
+  color: #e0e0e0;
+}
+#functionTable th {
+  background-color: #333;
+}
+#addFunctionBtn {
+  background-color: #333;
+  border: none;
+  color: #e0e0e0;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+#addFunctionBtn:hover {
+  background-color: #444;
+}
+
+.applyFunctionBtn {
+  background-color: #444;
+  border: none;
+  color: #e0e0e0;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+button:active {
+  box-shadow: 2.5px 2.5px 2px #222;
+}
+
+.applyFunctionBtn:hover {
+  background-color: #444;
+}
+
+
+.function-color {
+  background-color: #444;
+}
+
+select {
+  color: #e0e0e0 !important;
+  background-color: #444;
+}
+
+option {
+  color: #e0e0e0;
+  background-color: #444;
+}
+
+.removeFunction {
+  background-color: #800;
+  border: none;
+  color: #fff;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+.removeFunction:hover {
+  background-color: #a00;
+}
+
+.mq-cursor {
+  border-left: 1px solid white !important;
+  }
+  

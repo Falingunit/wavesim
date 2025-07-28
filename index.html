@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Wave on a String Simulation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+  </head>
+  
+  <body>
+    <header>
+      <h1>Wave on a String Simulation</h1>
+    </header>
+  
+    <main class="wrapper">
+      <section id="simulationSection">
+        <div id="simulationContainer">
+          <div id="buttonPanel">
+            <button id="pauseBtn" title="Pause">
+              <svg width="24" height="24" viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16" fill="#e0e0e0"/>
+                <rect x="14" y="4" width="4" height="16" fill="#e0e0e0"/>
+              </svg>
+            </button>
+            <button id="resetBtn">Reset</button>
+            <button id="zoomResetBtn">Reset Zoom</button>
+          </div>
+          <canvas id="waveCanvas" width="800" height="400"></canvas>
+        </div>
+      </section>
+  
+      <!-- New Controls Tab Box -->
+      <section class="control-tab-container">
+        <h3>Controls</h3>
+        <div class="tab-header">
+          <button class="tab-button active" data-tab="manual">Manual</button>
+          <button class="tab-button" data-tab="function">Function</button>
+        </div>
+        <div class="tab-content" id="tab-manual">
+          <!-- Manual mode: No extra controls -->
+          <p style="text-align: center; font-style: italic;">Manual mode: drag the left boundary on the graph.</p>
+        </div>
+        <div class="tab-content" id="tab-function" style="display: none; position: relative;">
+          <!-- Time display in the corner -->
+          <div class="time-display" id="functionTimeDisplay">Time: 0.00 s</div>
+          <!-- Table for multiple function inputs -->
+          <div id="functionTableContainer">
+            <table id="functionTable">
+              <thead>
+                <tr>
+                  <th>Function Expression</th>
+                  <th>Simulate?</th>
+                  <th>Color</th>
+                  <th>Pattern</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows will be added dynamically -->
+              </tbody>
+            </table>
+            <!-- Global Apply Button -->
+            <button id="addFunctionBtn" style="background-color: #525252;">Add Function</button>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Other Controls -->
+      <section class="controlsSection">
+        <div id="controls">
+          <!-- Right End Condition -->
+          <div class="control-group">
+            <label>Right End Condition:</label>
+            <div class="radio-group" style="padding-top: 1rem; padding-bottom: 0.5rem;">
+              <input type="radio" name="rightEnd" value="fixed" id="fixedEnd" checked>
+              <label for="fixedEnd" style="font-weight: normal;">Fixed End</label>
+              <input type="radio" name="rightEnd" value="free" id="freeEnd">
+              <label for="freeEnd" style="font-weight: normal;">Free End</label>
+              <input type="radio" name="rightEnd" value="infinite" id="infiniteEnd">
+              <label for="infiniteEnd" style="font-weight: normal;">Infinite String</label>
+            </div>
+          </div>
+          <!-- Animation Interval -->
+          <div class="control-group">
+            <label for="animInterval">Animation Interval (ms):</label>
+            <input type="range" id="animInterval" min="20" max="500" step="10" value="20" style="--default: 0%;">
+            <input type="number" id="animIntervalInput" min="20" max="500" step="10" value="20">
+          </div>
+          <!-- Y Scale -->
+          <div class="control-group">
+            <label for="yScale">Y Scale (Zoom):</label>
+            <input type="range" id="yScale" min="0.5" max="5" step="0.1" value="1.5" style="--default: 22.22%;">
+            <input type="number" id="yScaleInput" min="0.5" max="5" step="0.1" value="1.5">
+          </div>
+          <!-- String Length -->
+          <div class="control-group">
+            <label for="stringLength">String Length L (m):</label>
+            <input type="range" id="stringLength" min="0.5" max="2.0" step="0.1" value="1.0" style="--default: 33.33%;">
+            <input type="number" id="stringLengthInput" min="0.5" max="2.0" step="0.1" value="1.0">
+          </div>
+          <!-- Tension -->
+          <div class="control-group">
+            <label for="tension">Tension (N):</label>
+            <input type="range" id="tension" min="0.5" max="10" step="0.1" value="1.0" style="--default: 5.26%;">
+            <input type="number" id="tensionInput" min="0.5" max="10" step="0.1" value="1.0">
+          </div>
+          <!-- Mass Density -->
+          <div class="control-group">
+            <label for="massDensity">Mass Density μ (kg/m):</label>
+            <input type="range" id="massDensity" min="0.1" max="5" step="0.1" value="1.0" style="--default: 18.37%;">
+            <input type="number" id="massDensityInput" min="0.1" max="5" step="0.1" value="1.0">
+          </div>
+          <!-- Damping -->
+          <div class="control-group">
+            <label for="damping">Damping γ (1/s):</label>
+            <input type="range" id="damping" min="0" max="5" step="0.1" value="0" style="--default: 0%;">
+            <input type="number" id="dampingInput" min="0" max="5" step="0.1" value="0">
+          </div>
+          <!-- Resolution -->
+          <div class="control-group">
+            <label for="resolution">Resolution (N):</label>
+            <input type="range" id="resolution" min="50" max="500" step="10" value="101" style="--default: 11.33%;">
+            <input type="number" id="resolutionInput" min="50" max="500" step="10" value="101">
+          </div>
+          <!-- Wave Speed Display -->
+          <div class="control-group">
+            <label>Wave Speed \( c = \sqrt{T/\mu} \):</label>
+            <span id="waveSpeedDisplay"></span>
+          </div>
+          <!-- Main Simulation Controls -->
+          <div class="control-group">
+            <label>
+              <input type="checkbox" id="simulateMain" checked>
+              Simulate Main Wave
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              Main Wave Pattern:
+              <select id="mainWavePattern">
+                <option value="solid" selected>Solid</option>
+                <option value="dashed">Dashed</option>
+                <option value="dotted">Dotted</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </section>
+    </main>
+  
+    <script src="script.js"></script>
+  </body>
+</html>
