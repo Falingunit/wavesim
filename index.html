@@ -73,10 +73,19 @@
             </table>
             <!-- Global Apply Button -->
             <button id="addFunctionBtn" style="background-color: #525252;">Add Function</button>
+            </section>
+            <div style="color: gray; font-style: italic; margin-top: -1rem; margin-bottom: 1rem; text-align: center;">
+              Tip: Use t to denote time since the start of the simulation (shown in the top left corner) in your function expressions.
+              <br>
+              Also, when a function doesn't apply, try to add braces and be more explicit.
+              <br>
+              The Simulate checkbox simulates another wave alongside the main wave that only uses that specific function.
+              <br>
+              Try not to input functions that require the left side to jump suddenly (like cos(t)). It will cause the numerical integrator to blow up.
+            </div>
           </div>
         </div>
-      </section>
-  
+
       <!-- Other Controls -->
       <section class="controlsSection">
         <div id="controls">
