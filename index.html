@@ -19,18 +19,26 @@
     <main class="wrapper">
       <section id="simulationSection">
         <div id="simulationContainer">
-          <div id="buttonPanel">
-            <button id="pauseBtn" title="Pause">
-              <svg width="24" height="24" viewBox="0 0 24 24">
-                <rect x="6" y="4" width="4" height="16" fill="#e0e0e0"/>
-                <rect x="14" y="4" width="4" height="16" fill="#e0e0e0"/>
-              </svg>
-            </button>
-            <button id="resetBtn">Reset</button>
-            <button id="zoomResetBtn">Reset Zoom</button>
-          </div>
-          <canvas id="waveCanvas" width="800" height="400"></canvas>
+          <div id="simulationButtonContainer">
+            <div id="buttonPanel">
+              <button id="pauseBtn" title="Pause">
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                  <rect x="6" y="4" width="4" height="16" fill="#e0e0e0"/>
+                  <rect x="14" y="4" width="4" height="16" fill="#e0e0e0"/>
+                </svg>
+              </button>
+              <button id="resetBtn">Reset</button>
+              <button id="zoomResetBtn">Reset Zoom</button>
+            </div>
+            <canvas id="waveCanvas" width="800" height="400"></canvas>
+         </div>
+          <label><input type="checkbox" id="toggleEnergy" checked> Show Energy View</label>
+          <canvas id="energyCanvas" width="800" height="200"></canvas>
         </div>
+      </section>
+
+      <section class="info" style="color: gray; font-style: italic; margin-top: -1rem; margin-bottom: 1rem;">
+        Tip: You can click and drag the left numberline to adjust the scale of the display.
       </section>
   
       <!-- New Controls Tab Box -->
@@ -128,8 +136,13 @@
           </div>
           <!-- Wave Speed Display -->
           <div class="control-group">
-            <label>Wave Speed \( c = \sqrt{T/\mu} \):</label>
+            <label>Wave Speed (calculated value):</label>
             <span id="waveSpeedDisplay"></span>
+          </div>
+          <!-- CFL stability warning -->
+          <div class="control-group">
+            <label>Courant number r:</label>
+            <span id="cflWarning" style="font-weight: bold;"></span>
           </div>
           <!-- Main Simulation Controls -->
           <div class="control-group">
@@ -149,6 +162,10 @@
             </label>
           </div>
         </div>
+      </section>
+
+      <section class="info" style="color: gray;">
+        Created and maintained by <a href="https://falingunit.github.io" style="color: blanchedalmond;">Aniruddh Balamuali</a>
       </section>
     </main>
   

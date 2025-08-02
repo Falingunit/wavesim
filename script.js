@@ -66,6 +66,16 @@ const ctx = canvas.getContext('2d');
 const width = canvas.width;
 const height = canvas.height;
 
+// --- Energy view setup ---
+const energyCanvas = document.getElementById('energyCanvas');
+const eCtx = energyCanvas.getContext('2d');
+const eWidth = energyCanvas.width;
+const eHeight = energyCanvas.height;
+// Toggle element to show/hide the energy view
+const toggleEnergy = document.getElementById('toggleEnergy');
+toggleEnergy.addEventListener('change', () => {
+  energyCanvas.style.display = toggleEnergy.checked ? 'block' : 'none';
+});
 // Control variables
 let paused = false;
 let controlMode = "manual";  // "manual" or "function"
@@ -257,6 +267,118 @@ function drawWave() {
   ctx.stroke();
 }
 
+/**
+ * drawEnergy(): draw grid, axes, and smooth kinetic & potential energy densities
+ */
+function drawEnergy() {
+  // --- Clear canvas ---
+  eCtx.clearRect(0, 0, eWidth, eHeight);
+
+  // --- Draw grid ---
+  eCtx.strokeStyle = '#444';
+  eCtx.lineWidth = 1;
+  eCtx.beginPath();
+  const xSteps = 10;
+  for (let i = 0; i <= xSteps; i++) {
+    const x = (i / xSteps) * eWidth;
+    eCtx.moveTo(x, 0);
+    eCtx.lineTo(x, eHeight);
+  }
+  const ySteps = 5;
+  for (let j = 0; j <= ySteps; j++) {
+    const y = (j / ySteps) * eHeight;
+    eCtx.moveTo(0, y);
+    eCtx.lineTo(eWidth, y);
+  }
+  eCtx.stroke();
+
+  // --- Draw axes (bottom and left) ---
+  eCtx.strokeStyle = '#888';
+  eCtx.lineWidth = 2;
+  eCtx.beginPath();
+  // X-axis
+  eCtx.moveTo(0, eHeight);
+  eCtx.lineTo(eWidth, eHeight);
+  // Y-axis
+  eCtx.moveTo(0, 0);
+  eCtx.lineTo(0, eHeight);
+  eCtx.stroke();
+
+  // --- Compute raw KE and PE densities ---
+  const ke = new Array(N), pe = new Array(N);
+  let maxE = 0;
+  for (let i = 0; i < N; i++) {
+    // velocity
+    const v = (u_current[i] - u_previous[i]) / dt;
+    ke[i] = 0.5 * mu * v * v;
+
+    // slope du/dx
+    let slope;
+    if (i === 0)             slope = (u_current[1] - u_current[0]) / dx;
+    else if (i === N - 1)    slope = (u_current[N-1] - u_current[N-2]) / dx;
+    else                     slope = (u_current[i+1] - u_current[i-1]) / (2*dx);
+
+    pe[i] = 0.5 * tension * slope * slope;
+    maxE = Math.max(maxE, ke[i], pe[i]);
+  }
+
+  // --- Spatial smoothing (3-point moving average) ---
+  const keRaw = ke.slice(), peRaw = pe.slice();
+  for (let i = 0; i < N; i++) {
+    let sumKe = keRaw[i], sumPe = peRaw[i], count = 1;
+    if (i > 0)    { sumKe += keRaw[i-1]; sumPe += peRaw[i-1]; count++; }
+    if (i < N-1)  { sumKe += keRaw[i+1]; sumPe += peRaw[i+1]; count++; }
+    ke[i] = sumKe / count;
+    pe[i] = sumPe / count;
+  }
+
+  // --- Temporal smoothing (exponential) ---
+  if (!window.smoothKe) {
+    window.smoothKe = ke.slice();
+    window.smoothPe = pe.slice();
+  }
+  const alpha = 0.4;  // 0 < alpha ≤ 1: higher = more responsive
+  for (let i = 0; i < N; i++) {
+    window.smoothKe[i] = alpha * ke[i] + (1 - alpha) * window.smoothKe[i];
+    window.smoothPe[i] = alpha * pe[i] + (1 - alpha) * window.smoothPe[i];
+  }
+
+  // --- Plotting helper ---
+  function eToCanvas(idx, eVal) {
+    const x = (idx / (N - 1)) * eWidth;
+    const y = eHeight - (eVal / maxE) * eHeight;
+    return { x, y };
+  }
+
+  // --- Draw smoothed KE (red) ---
+  eCtx.beginPath();
+  for (let i = 0; i < N; i++) {
+    const p = eToCanvas(i, window.smoothKe[i]);
+    i === 0 ? eCtx.moveTo(p.x, p.y) : eCtx.lineTo(p.x, p.y);
+  }
+  eCtx.strokeStyle = '#f00';
+  eCtx.lineWidth = 2;
+  eCtx.stroke();
+
+  // --- Draw smoothed PE (green) ---
+  eCtx.beginPath();
+  for (let i = 0; i < N; i++) {
+    const p = eToCanvas(i, window.smoothPe[i]);
+    i === 0 ? eCtx.moveTo(p.x, p.y) : eCtx.lineTo(p.x, p.y);
+  }
+  eCtx.strokeStyle = '#0f0';
+  eCtx.lineWidth = 2;
+  eCtx.stroke();
+
+  // --- Legend ---
+  eCtx.font = '12px Arial';
+  eCtx.fillStyle = '#f00';
+  eCtx.fillText('Kinetic (KE)', 10, 15);
+  eCtx.fillStyle = '#0f0';
+  eCtx.fillText('Potential (PE)', 110, 15);
+}
+
+
 // ------------------------------
 // Simulation Update Function (Main Simulation)
 // ------------------------------
@@ -407,7 +529,9 @@ function mainLoop(currentTime) {
   
   // Draw main wave
   drawWave();
-  
+  if (toggleEnergy.checked) {
+    drawEnergy();
+  }  
   // Draw extra simulation waves
   Object.keys(extraSimulations).forEach(rowId => {
     const row = document.querySelector(`#functionTable tbody tr[data-row-id="${rowId}"]`);
